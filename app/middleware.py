@@ -8,9 +8,7 @@ from .limiter import FixedWindowRateLimiter
 """
 Creating a system that can sit in front of API route and check if the user is 
 under limit request limit. 
-
 """
-
 def rate_limit(redis_client): 
     limiter = FixedWindowRateLimiter(redis_client)
 
