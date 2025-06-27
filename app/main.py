@@ -34,6 +34,7 @@ def create_app():
     # You return the Flask app so it can be used by a WSGI server or other context
     return app
 
+
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
