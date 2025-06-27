@@ -4,6 +4,7 @@ import redis
 import os
 from dotenv import load_dotenv
 from .middleware import rate_limit 
+from .limiters import fixed_window
 
 load_dotenv()
 
@@ -25,9 +26,11 @@ def create_app():
         decode_responses=True
     )
 
+    limiter = fixed_window.FixedWindowRateLimiter(redis_client, max_requests=5, window_size=60)
+
     # Now when a user hits this endpoint, the request first goes through the rate limiter
     @app.route("/get-data")
-    @rate_limit(redis_client) 
+    @rate_limit(limiter) 
     # If the limiter says “OK” → it runs get_data() and returns data
     def get_data():
         return jsonify({"message": "Here is your data!"})
