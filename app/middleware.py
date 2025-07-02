@@ -3,20 +3,29 @@
 # wraps: a Python tool to preserve function metadata when wrapping a function
 from flask import request, jsonify
 from functools import wraps
+from limiter_factory import get_limiter_for_route
 
 """
 Creating a system that can sit in front of API route and check if the user is 
 under limit request limit. 
 """
-def rate_limit(limiter): 
+def config_aware_rate_limiter(redis_client): 
     def decorator(f): 
         @wraps(f)
         def wrapper(*args, **kwargs):
+          route = request.path
           user_ip = request.remote_addr 
-          if limiter.is_allowed(user_ip): 
-             return f(*args, **kwargs)
-          else: 
-             return jsonify({"error": "Too Many Requests"}), 429
+
+          try: 
+             limiter = get_limiter_for_route(route, redis_client)
+             if not limiter.is_allowed(user_ip): 
+                return jsonify({"error": "Too Many Requests"}), 429
+             
+          except ValueError as e: 
+             return jsonify({"error": str(e)}), 500
+          
+          return f(*args, **kwargs)
+        
         return wrapper
     
     return decorator
