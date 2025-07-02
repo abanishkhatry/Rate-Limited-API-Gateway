@@ -1,7 +1,13 @@
 import time 
 from .base import BaseRateLimiter
 
-# class to track and enforce limits
+"""
+class to track and enforce limits. 
+In fixed window, you are given a window of 60 secs (lets say), then you will can do 5 requests at 
+time during that timeframe. It resets after 60s passes, and again gives you another 60 sec window
+where you could make 5 requests.
+
+"""
 class FixedWindowRateLimiter(BaseRateLimiter): 
     # constructor 
     def _init_(self, redis_client, max_requests = 5, window_size = 60 ): 
