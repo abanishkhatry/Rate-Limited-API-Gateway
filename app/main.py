@@ -3,8 +3,8 @@ from flask import Flask, jsonify
 import redis
 import os
 from dotenv import load_dotenv
-from .middleware import rate_limit 
-from .limiters import fixed_window
+from middleware import config_aware_rate_limiter
+from limiter_factory import get_limiter_for_route
 
 load_dotenv()
 
@@ -25,16 +25,39 @@ def create_app():
         port=int(os.getenv("REDIS_PORT", 6379)),
         decode_responses=True
     )
+    rate_limit_decorator = config_aware_rate_limiter(redis_client)
 
-    limiter = fixed_window.FixedWindowRateLimiter(redis_client, max_requests=5, window_size=60)
+    print(f"[Limiter] Using: {type(rate_limit_decorator).__name__}")
 
     # Now when a user hits this endpoint, the request first goes through the rate limiter
     @app.route("/get-data")
-    @rate_limit(limiter) 
+    @rate_limit_decorator
     # If the limiter says “OK” → it runs get_data() and returns data
     def get_data():
         return jsonify({"message": "Here is your data!"})
     # You return the Flask app so it can be used by a WSGI server or other context
+
+    # Now when a user hits this endpoint, the request first goes through the rate limiter
+    @app.route("/login")
+    @rate_limit_decorator
+    # If the limiter says “OK” → it makes login successful
+    def login():
+        return jsonify({"message": "Login successful!"})
+    # You return the Flask app so it can be used by a WSGI server or other context
+
+    @app.route("/search")
+    @rate_limit_decorator
+    # If the limiter says “OK” → it gives back what were searched
+    def search():
+        return jsonify({"message": "Here are your search results"})
+    # You return the Flask app so it can be used by a WSGI server or other context
+
+    @app.route("/chat")
+    @rate_limit_decorator
+    # If the limiter says “OK” → it returns all the chats
+    def chat():
+        return jsonify({"message": "Chat loaded!"})
+
     return app
 
 
