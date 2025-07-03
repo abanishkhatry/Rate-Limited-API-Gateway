@@ -1,10 +1,10 @@
 # app/main.py
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import redis
 import os
 from dotenv import load_dotenv
 from middleware import config_aware_rate_limiter
-from limiter_factory import get_limiter_for_route
+from auth import generate_token
 
 load_dotenv()
 
@@ -57,6 +57,16 @@ def create_app():
     # If the limiter says “OK” → it returns all the chats
     def chat():
         return jsonify({"message": "Chat loaded!"})
+
+    @app.route("/auth/token" , methods = ["POST"])
+    def issue_token(): 
+        """
+        This is a FAKE login endpoint to issue a JWT.
+        Send JSON like: { "user_id": "user123", "role": "free" }
+        """
+        data = request.get_json()
+        token = generate_token(data["user_id"] , data["role"])
+        return jsonify({"token" : token})
 
     return app
 
