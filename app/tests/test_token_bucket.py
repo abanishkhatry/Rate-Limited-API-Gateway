@@ -43,7 +43,7 @@ def test_over_limit_blocks_requests(limiter):
     for _ in range(5):
         assert limiter.is_allowed(user_id) is True
 
-    # Now the 6th request should be blocked because no tokens left
+    # Now the 6th request should be not allowed because no tokens left
     assert limiter.is_allowed(user_id) is False
 
 # test that verifies after tokens run out, they get refilled over time, allowing new requests again. 
