@@ -26,7 +26,7 @@ class SlidingWindowRateLimiter(BaseRateLimiter):
 
         if request_count < self.max_requests:
             # Step 3: Add the current request timestamp
-            self.redis.zadd(key, {str(current_time): current_time})
+            self.redis.zadd(key, {f"{user_id}:{current_time}:{time.time_ns()}": current_time})
             # Step 4: Set expiration (optional safety)
             self.redis.expire(key, self.window_size)
             return True
