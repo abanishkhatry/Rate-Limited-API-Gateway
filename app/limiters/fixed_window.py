@@ -10,8 +10,8 @@ where you could make 5 requests.
 """
 class FixedWindowRateLimiter(BaseRateLimiter): 
     # constructor 
-    def _init_(self, redis_client, max_requests = 5, window_size = 60 ): 
-        super()._init_(redis_client) 
+    def __init__(self, redis_client, max_requests=5, window_size=60): 
+        super().__init__(redis_client) 
         self.max_requests = max_requests
         # meaning 1-minute window
         self.window_size = window_size
