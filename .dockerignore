@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local test/venv files
+.venv/
+venv/
+.pytest_cache/
+__snapshots__/
+*.db
+*.log
+
+# Env and secrets
+.env
+
+# Docker & Git
+Dockerfile
+.dockerignore
+.git
+.gitignore
+
+# Misc
+.DS_Store
+.vscode/
