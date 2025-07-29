@@ -1,0 +1,54 @@
+# Here, the Github creates a little Linux computer and installs Python and Redis. 
+# Then it downloads the project and installs everything required
+# Then it runs the tests and fails if anything breaks. 
+
+
+# just the name of the workflow
+name: CI - Rate Limiter API
+
+# This tells Github, run this workflow whenever someone pushes to main or 
+# opens a pull request into main. 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Here, we are defining the job we will be doing, and we are using the latest Ubuntu Linux system
+# the job we are doing is test, for which we run a Redis server inside this virtual computer. 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+          # checks the status of redis before using it, in every 10 sec. It gives redis 5 secs to 
+          # respond and it does this step 5 times, and failing all these results in giving up. 
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    # listing the steps of the job. 
+    steps:
+      # get the latest version of your code from Github.
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # install the python version 3.10 inside this computer.
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      # First get the latest python package installer and then install all the libraries the app 
+      # needs through the listing of requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      # the workflow now runs the test suite using pytest. 
+      - name: Run tests with pytest
+        run: |
+          pytest
