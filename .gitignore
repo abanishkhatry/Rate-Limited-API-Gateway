@@ -1,3 +1,28 @@
+# Python cache
 __pycache__/
 .pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
 .venv/
+venv/
+
+# IDE/editor related
+.DS_Store
+.vscode/
+*.log
+
+# Environment and sensitive files
+.env
+
+# Docker cache
+*.db
+
+# Test output
+__snapshots__/
+
+# Git internal
+.git
+.gitignore
