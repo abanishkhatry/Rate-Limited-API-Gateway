@@ -19,10 +19,8 @@ services:
     ports:
       - "5050:5050"
     env_file:
-      - .env.docker  
-    # setting up the environment variables just like in Dockerfile
-
-    restart: unless-stopped  
-    # making sure redis starts before your app tries to use it.   
+      - .env 
+     # making sure redis starts before your app tries to use it.   
     depends_on:
-      - redis
+      - redis  
+    restart: unless-stopped  
