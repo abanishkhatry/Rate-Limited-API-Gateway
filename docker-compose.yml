@@ -1,0 +1,28 @@
+# version of the Docker compose we are using
+version: '3.8'
+
+# Here, we are going to list 2 machines, one for redis and one for our app
+services:
+  # tells compose to run the official Redis server image
+  redis:
+    image: redis:latest
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  # tells compose to run the Flask rate-limiter app
+  app:
+    # docker compose will look for a Dockerfile in the current directory to build your image. 
+    build: .
+    container_name: rate-limiter-api
+    ports:
+      - "5050:5050"
+    env_file:
+      - .env.docker  
+    # setting up the environment variables just like in Dockerfile
+
+    restart: unless-stopped  
+    # making sure redis starts before your app tries to use it.   
+    depends_on:
+      - redis
