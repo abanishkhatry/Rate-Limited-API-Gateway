@@ -1,5 +1,6 @@
 # jwt helps us create and read secret message tokens. 
-import jwt
+import jwt  # from PyJWT
+print("Using jwt from:", jwt.__file__)
 import datetime
 # request: lets us see what a user sent us. 
 # jsonify: helps us send data back to the user in a clean JSON format.
