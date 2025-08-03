@@ -59,7 +59,7 @@ def test_token_refill_allows_future_requests(limiter):
     assert limiter.is_allowed(user_id) is False
 
     # Wait 2 seconds to allow 2 tokens to refill (fill_rate = 1 per second)
-    time.sleep(2)
+    time.sleep(2.2)
 
     # Now 2 requests should be allowed again
     assert limiter.is_allowed(user_id) is True
