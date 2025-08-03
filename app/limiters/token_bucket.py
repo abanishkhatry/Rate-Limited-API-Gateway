@@ -1,6 +1,6 @@
 import time
 from .base import BaseRateLimiter
-
+import math
 """
 In Token Bucket, you are initially given a bucket with certain requests (lets say 10). you can use 
 those 10 requests instantly or over a certain time. After every specific time interval the bucket
@@ -38,7 +38,7 @@ class TokenBucketRateLimiter(BaseRateLimiter):
             last_refill_time = float(last_refill_time)
 
         time_passed = current_time - last_refill_time
-        refill_tokens = time_passed * self.refill_rate
+        refill_tokens = math.floor(time_passed * self.refill_rate)
         token_count = min(self.bucket_capacity, token_count + refill_tokens)
 
         allowed = token_count >= 1
